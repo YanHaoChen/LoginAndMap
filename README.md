@@ -355,7 +355,7 @@ func GetMarkerValue(c *gin.Context) {
 ![地圖](https://github.com/YanHaoChen/LoginAndMap/blob/master/images/map.png?raw=true)
 
 ### 顯示數值
-![顯示數值](https://github.com/YanHaoChen/LoginAndMap/blob/master/images/map.png?raw=true)
+![顯示數值](https://github.com/YanHaoChen/LoginAndMap/blob/master/images/value.png?raw=true)
 
 ### Server 狀況
 ![Server 狀況](https://github.com/YanHaoChen/LoginAndMap/blob/master/images/server.png?raw=true)

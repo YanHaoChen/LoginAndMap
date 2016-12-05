@@ -30,27 +30,29 @@
 
   <script type="text/javascript">
   $(document).ready(function() {
-    $("#login").click(function() {
-      $.ajax({
-          type: "POST",
-          url: "http://127.0.0.1:8080/User/Login",
-          dataType: "json",
-          data: {
-              account: $("#account").val(),
-              password: $("#password").val()
-          },
-          success: function(data) {
-              sessionStorage.setItem("token",data["token"]);
-              sessionStorage.setItem("account",data["account"]);
-
-              location.href="/hw3_web/marksmap.html";
-          },
-          error: function(jqXHR) {
-              alert("發生錯誤: " + jqXHR.status);
-          }
-      })
-    })
+    sessionStorage["token"] = "";
+    sessionStorage["account"] = "";
   });
+  $("#login").click(function() {
+    $.ajax({
+        type: "POST",
+        url: "http://127.0.0.1:8080/User/Login",
+        dataType: "json",
+        data: {
+            account: $("#account").val(),
+            password: $("#password").val()
+        },
+        success: function(data) {
+            sessionStorage.setItem("token",data["token"]);
+            sessionStorage.setItem("account",data["account"]);
+
+            location.href="/hw3_web/marksmap.html";
+        },
+        error: function(jqXHR) {
+            alert("發生錯誤: " + jqXHR.status);
+        }
+    })
+  })
   </script>
   </body>
 </html>

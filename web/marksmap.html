@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.min.css">
     <script src="./bower_components/jquery/dist/jquery.min.js" charset="utf-8"></script>
     <script async defer
-      src="https://maps.googleapis.com/maps/api/js?key=your_key&callback=initMap">
+      src="https://maps.googleapis.com/maps/api/js?key=yourkey&callback=initMap">
     </script>
   </head>
   <body>
@@ -58,7 +58,7 @@
           token: sessionStorage["token"]
         },
         success: function(data){
-          getTheMakers();
+          getTheMarkers();
         },
         error: function(jqXHR) {
           sessionStorage["account"] = "";
@@ -74,10 +74,10 @@
       location.href="/hw3_web/login.html";
     });
 
-    function getTheMakers(){
+    function getTheMarkers(){
       $.ajax({
         type: "POST",
-        url: "http://127.0.0.1:8080/Maker/GetLightMapMakers",
+        url: "http://127.0.0.1:8080/Marker/GetLightMapMarkers",
         dataType: "json",
         data: {
           account: sessionStorage["account"],
@@ -85,7 +85,7 @@
         },
         success: function(data){
           makers = data;
-          addMakers();
+          addMarkers();
         },
         error: function(jqXHR) {
           sessionStorage["account"] = "";
@@ -95,7 +95,7 @@
       });
     }
 
-    function addMakers(){
+    function addMarkers(){
       var ads = [];
       for(var i=0;i< makers.length; i++){
         var locationName = makers[i]["locationName"];
@@ -111,13 +111,25 @@
                 animation: google.maps.Animation.DROP,
                 title: locationName
               });
-              marker.addListener('click', toggleBounce);
+              marker.addListener('click', function(e) {
+                html = "";
+                html += locationName;
+                var infoWindow = new google.maps.InfoWindow({
+                  content: html
+                });
+                infoWindow.open(map,marker);
+              });
+              marker.addListener('dblclick', function(e) {
+                sessionStorage["find"] = locationName.toString();
+                window.open('highchart.html', locationName.toString(), config='height=400,width=600')
+              });
             }
           });
 
         }
       }
     }
+
 
     </script>
 

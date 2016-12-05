@@ -18,7 +18,7 @@ type User struct {
 	Token string `db:"token" json:"token"`
 }
 
-type LightMapMaker struct {
+type LightMapMarker struct {
 	Id int64 `db:"id" json:"id"`
 	Time time.Time `db:time json:"time"`
 	Value float64 `db:"value" json:"value"`
@@ -34,9 +34,10 @@ func main(){
 		user.POST("/Login", Login)
 		user.POST("/AuthStatus", AuthStatus)
 	}
-	maker := r.Group("Maker")
+	marker := r.Group("Marker")
 	{
-		maker.POST("/GetLightMapMakers",GetLightMapMakers)
+		marker.POST("/GetLightMapMarkers",GetLightMapMarkers)
+		marker.POST("/GetMarkerValue",GetMarkerValue)
 	}
 
 	r.Run(":8080")
@@ -56,7 +57,7 @@ func initDb() *gorp.DbMap {
 	checkErr(err, "sql.Open failed")
 	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{"InnoDB", "UTF8"}}
 	dbmap.AddTableWithName(User{}, "User").SetKeys(true, "Id")
-	dbmap.AddTableWithName(LightMapMaker{}, "LightMapMaker").SetKeys(true,"Id")
+	dbmap.AddTableWithName(LightMapMarker{}, "LightMapMarker").SetKeys(true,"Id")
 	err = dbmap.CreateTablesIfNotExists()
 	checkErr(err, "Create table failed")
 
@@ -110,20 +111,20 @@ func AuthStatus(c *gin.Context) {
 	}
 }
 
-func GetLightMapMakers(c *gin.Context) {
+func GetLightMapMarkers(c *gin.Context) {
 	var user User
-	var makers []LightMapMaker
+	var markers []LightMapMarker
 	account := c.PostForm("account")
 	token := c.PostForm("token")
 
 	if token != "" && account != "" {
 		err := dbmap.SelectOne(&user, "SELECT * FROM User WHERE token=? AND account=?", token,account)
 		if err == nil {
-			_, err := dbmap.Select(&makers, "SELECT * FROM LightMapMaker WHERE account=?",account)
+			_, err := dbmap.Select(&markers, "SELECT * FROM LightMapMarker WHERE account=?",account)
 			if err == nil {
-				c.JSON(200,makers)
+				c.JSON(200,markers)
 			} else {
-				c.JSON(404,gin.H{"error":"something wrong"})
+				c.JSON(404,gin.H{"error":err.Error()})
 			}
 
 		} else {
@@ -133,4 +134,17 @@ func GetLightMapMakers(c *gin.Context) {
 		c.JSON(422, gin.H{"error":"fields are empty"})
 	}
 
+}
+
+func GetMarkerValue(c *gin.Context) {
+	var markers []LightMapMarker
+	account := c.PostForm("account")
+	locationName := c.PostForm("locationName")
+
+	_, err := dbmap.Select(&markers, "SELECT * FROM LightMapMarker WHERE account=? AND locationName=?",account, locationName)
+	if err == nil {
+		c.JSON(200,markers)
+	} else {
+		c.JSON(404,gin.H{"error":"something wrong"})
+	}
 }

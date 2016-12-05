@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Light Value</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta HTTP-EQUIV="Content-Type" content="text/html; charset=utf-8">
+    <script src="./bower_components/jquery/dist/jquery.min.js" charset="utf-8"></script>
+
+    <script src="http://code.highcharts.com/stock/highstock.js" charset="utf-8"></script>
+    <script src="http://code.highcharts.com/stock/modules/exporting.js" charset="utf-8"></script>
+  </head>
+  <body>
+    <div id="con">
+
+    </div>
+  </body>
+  <script type="text/javascript">
+    function initialize(){
+      $.ajax({
+        type:'POST',
+        url:'http://127.0.0.1:8080/Marker/GetMarkerValue',
+        data:{
+          locationName: sessionStorage["find"],
+          account: sessionStorage["account"]
+        },
+        dataType: 'json',
+        success:getDataSuccess
+      })
+    };
+    function getDataSuccess(data){
+      $('#con').empty();
+      var val = [];
+      var stime = [];
+      var dataNum = data.length;
+      for(var i=0;i<dataNum; i++){
+        val.push(parseInt(data[i]["value"]));
+        stime.push(data[i]["Time"].toString());
+      }
+      var ads = data[0]["locationName"].toString();
+
+      $('#con').highcharts({
+        title:{
+          text: '光度變化'
+        },
+        subtitle:{
+          text: ads
+        },
+        scrollbar: {
+          enabled: true
+        },
+        chart: {
+          type: 'spline',
+          zoomType: 'x'
+        },
+        xAxis: {
+          tickInterval: 1,
+          labels: {
+            enabled: true,
+            formatter: function(){
+              return stime[this.value];
+            }
+          }
+        },
+        yAxis: {
+          title: {
+            text: 'light value'
+          }
+        },
+        series: [
+          {
+            name: 'light',
+            data:val
+          }
+        ],
+        tooltip: {
+          formatter: function(){
+            return '<b>' + stime[this.x] + '</b><br><li>'+this.series.name+':<b>' + this.y + '</b></li>';
+          }
+        },
+        plotOptions: {
+          spline: {
+            lineWidth: 3,
+            states: {
+              hover:{
+                lineWidth: 5
+              }
+            },
+            marker: {
+              enabled: true
+            }
+          }
+        }
+      });
+    }
+    initialize();
+  </script>
+</html>

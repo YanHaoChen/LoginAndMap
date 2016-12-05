@@ -94,7 +94,7 @@ find | 給 highchart.html 使用，儲存顯示地理位置
 
 ##### 登入（login.html）
 
-```html
+```js
 $("#login").click(function() {
     $.ajax({
         type: "POST",
@@ -152,7 +152,7 @@ func Login(c *gin.Context) {
 
 ##### 驗證（marksmap.html）
 
-```html
+```js
 $(document).ready(function(){
       $.ajax({
         type: "POST",
@@ -251,7 +251,7 @@ func GetLightMapMarkers(c *gin.Context) {
 
 ##### 加入 Marker 並加入監聽事件（marksmap.html）
 
-```html
+```js
 function addMarkers(){
       var ads = [];
       for(var i=0;i< makers.length; i++){
@@ -290,7 +290,7 @@ function addMarkers(){
 
 ##### 加入開啟 InfoWindow（marksmap.html）
 
-```html
+```js
 marker.addListener('click', function(e) {
                 html = "";
                 html += locationName;
@@ -307,14 +307,14 @@ marker.addListener('click', function(e) {
 
 ##### 在雙擊監聽事件中，開啟另一個 html（marksmap.html）
 
-```html
+```js
 marker.addListener('dblclick', function(e) {
                 sessionStorage["find"] = locationName.toString();
                 window.open('highchart.html', locationName.toString(), config='height=400,width=600')
               });
 ```
 ##### 取得特定地點資料（highchart.html）
-```html
+```js
 function initialize(){
       $.ajax({
         type:'POST',
